@@ -1,0 +1,153 @@
+<%- include("partials/header.ejs"); -%>
+<link rel="stylesheet" type="text/css" href="/custom.css">
+<% if(currentUser && currentUser.username=="admin12345" ) { %>
+  <div class="container-fluid mt-3">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="list-group">
+          <a href="/" class="list-group-item list-group-item-action active">
+            Dashboard
+          </a>
+          <a href="/orders" class="list-group-item list-group-item-action">Orders <span style="color: red;"><%=no_of_items%></span></a>
+          <a href="/products" class="list-group-item list-group-item-action">Products</a>
+          <a href="#" class="list-group-item list-group-item-action">Customers</a>
+          <a href="#" class="list-group-item list-group-item-action">Reports</a>
+          <a href="#" class="list-group-item list-group-item-action">Settings</a>
+        </div>
+      </div>
+      <div class="col-md-9">
+        <h2>Dashboard</h2>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="card shadow-lg">
+              <div class="card-body">
+                <h5 class="card-title">Total Orders</h5>
+                <p class="card-text">100</p>
+                <div id="orders-chart" style="height: 400px;"></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card shadow-lg">
+              <div class="card-body">
+                <h5 class="card-title">Total Revenue</h5>
+                <p class="card-text">$10,000</p>
+                <div id="revenue-chart" style="height: 400px;"></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card shadow-lg">
+              <div class="card-body">
+                <h5 class="card-title">Total Customers</h5>
+                <p class="card-text">50</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% } else { %>
+  <div class="container-fluid mt-3">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="card" >
+          <ul class="list-group list-group-flush list-group" >
+            <a href="/" class="list-group-item list-group-item-action active">Products</a>
+            <%if(currentUser){%>
+            <a href="/cart" class="list-group-item list-group-item-action">Cart <span style="color: red;"><%=no_of_items2%> </a>
+              <%}else{%>
+                <a href="/cart" class="list-group-item list-group-item-action">Cart </a>
+                <%}%>
+            <a href="#" class="list-group-item list-group-item-action">Orders</a>
+            <a href="#" class="list-group-item list-group-item-action">Feedback</a>
+            <a href="#" class="list-group-item list-group-item-action">Settings</a>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-9">
+        <h2>Products</h2>
+        <% if(products.length<1) { %>
+          <p class="text-white">No products yet</p>
+        <% } %>
+        <div class="row">
+          <% products.forEach(function(product) { %>
+            <div class="col-md-6 col-lg-4 col-sm-12 cards mb-4">
+              <div class="card shadow-lg" style="border: none;">
+                <img src="/uploads/images/<%= product.img %>" class="card-img-top rounded" alt="..." style="max-height: 400px;">
+                <div class="card-body">
+                  <h5 class="card-title" style="font-size: 30px;"><%=product.name %></h5>
+                  <p class="card-text">Price: $ <%= product.price %></p>
+                  <p class="card-text" style="font-size: 20px;"><%= product.description %></p>
+                  <p class="card-text"><small class="text-muted">Updated on:   <%= moment(product.timeCreated).fromNow() %></small></p>
+                  <form action="/<%=product._id %>" method="POST">
+                    <div class="text-center">
+                      <% if(currentUser && currentUser.username=="admin12345" ) { %>
+                      <% } else { %>
+                        <button class="btn btn-success btn-lg" type="button" data-toggle="modal" data-target="#exampleModal" data-product-name="<%= product.name %>" data-product-price="<%= product.price %>">Add to Cart</button>
+                      <% } %>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Add to Cart</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <% products.forEach(function(product) { %>
+          <form action="/<%=product._id %>" method="POST">
+            <% }) %>
+            <div class="form-group">
+              <label for="amount">Amount in $:</label>
+              <input type="number" class="form-control" id="amount" name="amount" required>
+            </div>
+            <input type="hidden" id="product-id" name="product-id" value="">
+            <input type="hidden" id="product-name" name="product-name" value="">
+            <input type="hidden" id="product-price" name="product-price" value="">
+            <button class="btn btn-success btn-lg" type="submit">Add to Cart</button>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+<% } %>
+<%- include("partials/footer.ejs"); -%>
+
+<style>
+  .card {
+    box-shadow: 0px 0px 50px rgba(0, 0, 0, 0.2);
+  }
+
+  .rounded {
+    border-radius: 10px;
+  }
+</style>
+
+<script>
+  $('#exampleModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget)
+    var productName = button.data('product-name')
+    var productPrice = button.data('product-price')
+    var modal = $(this)
+    modal.find('.modal-title').text('Add ' + productName + ' to Cart')
+    modal.find('#product-name').val(productName)
+    modal.find('#product-price').val(productPrice)
+  })
+</script>

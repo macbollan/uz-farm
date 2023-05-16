@@ -1,0 +1,36 @@
+<%- include("partials/header.ejs") -%>
+
+
+<div class="container" >
+<div class="jumbotron"  style="width: 40%; margin: 100px auto; ">
+
+<h1>Login </h1>
+
+<form action="/login" method="POST" >
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input type="text" class="form-control" id="name" name="username" placeholder="Enter your firstname">
+    </div>
+    <div class="form-group">
+      <label for="pass">Password</label>
+      <input type="password" name="password" class="form-control" id="password" placeholder="Password">
+    </div>
+    <button type="submit" class="btn btn-primary">Signin</button>
+  </form><br>
+
+<a class="btn btn-success" href="/register">Register</a>
+</div>
+
+<style>
+  h1{
+    text-align: center;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  }
+  
+  label{
+    font-size: 11pt;
+    font-weight: bold;
+  }
+</style>
+</div>
+<%- include("partials/footer.ejs") -%>

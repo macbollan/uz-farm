@@ -1,0 +1,98 @@
+<%- include("partials/header.ejs"); -%>
+
+
+
+
+
+  <div class="container-fluid mt-3">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="list-group">
+          <a href="/" class="list-group-item list-group-item-action">
+            Dashboard
+          </a>
+          <a href="/orders" class="list-group-item list-group-item-action active">Orders <span style="color: red;"><%=no_of_items%></span></a>
+          <a href="/products" class="list-group-item list-group-item-action">Products</a>
+          <a href="#" class="list-group-item list-group-item-action">Customers</a>
+          <a href="#" class="list-group-item list-group-item-action">Reports</a>
+          <a href="#" class="list-group-item list-group-item-action">Settings</a>
+        </div>
+      </div>
+      <div class="col-md-9">
+
+        <div class="container-fluid mt-3">
+          <h2>Pending Orders</h2>
+
+              
+
+
+        <% if(products.length<1){%>
+
+          <p class="text-white">No products yet</p>
+      
+        <%  } %>
+      
+        <% products.forEach(function(product){ %>
+            
+  
+            <div class="card mb-3 shadow" style="padding: 30px;" >
+              <div class="row">
+                <div class="col-md-4" >
+      
+                  <img class="img-fluid" alt="" src="/uploads/images/<%= product.img %>">
+      
+                </div>
+                <div class="col-md-8" style="position: relative;">
+                  <div class="card-body">
+      
+                    <% let count = 0; %>
+                    <% let totalPrice = 0; %>
+                    <% order_items.forEach(function(item){ %>
+                      <% if(product.name===item.product.name) { %>
+                        <% count++; %>
+                        <% totalPrice += item.product.price; %>
+                      <% } %>
+                    <% }); %>
+      
+                    <% if(currentUser && currentUser.username=="admin12345" ) { %>
+                      <div style="position: absolute; top: 0; right: 0; font-size: 26px;">
+                        Total Number Of Orders: <span style="color: red;"><%= count %></span><br>
+                        Total Price Of Orders: $ <span style="color: red;"><%= totalPrice %></span><br>
+                        <a href="/<%= product.name %>" class="btn-lg btn-primary">View <%=product.name%> orders </a>
+                      </div>
+                    <% } %>
+      
+                    <h2 class="card-title" style="font-size: 40px;"><%=product.name %></h2>
+                    <p>Price: $ <%= product.price %></p>
+                    <p class="card-text"><small class="text-muted">Updated on:   <%= moment(product.timeCreated).fromNow() %></small></p>
+      
+                    <% if(currentUser && currentUser.username=="admin12345" ) { %>
+                      <a href="/<%=product._id %>/edit" class="btn btn-primary">Edit</a>
+                      <form action="/<%=product.name%>?_method=DELETE" method="POST" style="display: inline-block;">
+                        <button class="btn btn-danger">Delete</button>
+                      </form>
+                    <% } else { %>
+                      <form action="/cart/<%=product._id%>" method="POST" style="display: inline-block;">
+                        <button class="btn btn-primary">Add to Cart</button>
+                      </form>
+                    <% } %>
+      
+                  </div>
+                </div>
+              </div>
+            </div>
+      
+
+      
+        <% }); %>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+ <!-- ==================================================================================================================================== -->
+
+
+
+<%- include("partials/footer.ejs"); -%>

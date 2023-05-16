@@ -1,0 +1,151 @@
+<%- include("partials/header.ejs"); -%>
+
+
+
+
+<% if(currentUser && currentUser.username=="admin12345" ) { %>
+  <div class="container-fluid mt-3">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="list-group">
+          <a href="/" class="list-group-item list-group-item-action ">
+            Dashboard
+          </a>
+          <a href="/cart" class="list-group-item list-group-item-action active">Orders <span style="color: red;"><%=no_of_items%></span></a>
+          <a href="/products" class="list-group-item list-group-item-action">Products</a>
+          <a href="#" class="list-group-item list-group-item-action">Customers</a>
+          <a href="#" class="list-group-item list-group-item-action">Reports</a>
+          <a href="#" class="list-group-item list-group-item-action">Settings</a>
+        </div>
+      </div>
+      <div class="col-md-9">
+        <h2>Recent Orders</h2>
+        <div class="container-fluid mt-3">
+          <h4>Pending Orders</h4>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Customer Name</th>
+                <th>Customer Address</th>
+                <th>Customer Phone</th>
+                <th>Customer Eamil</th>
+              </tr>
+            </thead>
+
+
+            <tbody>
+              <% orders.forEach(function(order) { %>
+              <tr>
+                <td> <%= order.user.username %></td>
+                <td> <%= order.user.address %></td>
+                <td> <%= order.user.phone %></td>
+                <td> <%= order.user.email %></td>
+                <td><button class="btn btn-success">Confirm</button></td>
+              </tr>
+              <% }); %>
+              
+            </tbody>
+          </table>
+      
+          <button class="btn btn-primary mb-3" id="viewHistoryBtn">View Order History</button>
+      
+          <div id="orderHistory" style="display: none;">
+            <h4>Order History</h4>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Customer Name</th>
+                  <th>Customer Address</th>
+                  <th>Customer Phone</th>
+                  <th>Customer Eamil</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% orders.forEach(function(order) { %>
+                <tr>
+                  <td> <%= order.user.username %></td>
+                  <td> <%= order.user.address %></td>
+                  <td> <%= order.user.phone %></td>
+                  <td> <%= order.user.email %></td>
+                  <td><span class="text-muted">Delivered</span></td>
+                </tr>
+                <% }); %>
+
+              </tbody>
+            </table>
+          </div>
+      
+        </div>
+      </div>
+    </div>
+  </div>
+ <!-- ==================================================================================================================================== -->
+ <% }else{%>
+
+  <!-- ==================================================================================================================================== -->
+  <div class="container">
+
+    <header class="jumbotron">
+      <div class="container">
+        <h1>Available Orders: <span style="color: red;"><%=noOfItems%></span></h1>
+        <p>
+  
+          <% if(currentUser && currentUser.username=="admin12345" ) { %>
+          <a href="/new" class="btn btn-primary btn-lg">Add a product</a>
+          <a href="/" class="btn btn-primary btn-lg">Go Back</a>
+          <% } %>
+         
+        </p>
+      </div>
+    </header>
+  
+    <% if(orders<1){%>
+      <p class="text-white">No products yet</p>
+    <%  } %>
+  
+    <% orders.forEach(function(product){ %>
+      <div class="container">
+        <div class="card mb-3" >
+          <div class="row">
+            <div class="col-md-4">
+              <img class="img-fluid" style="width: 200px;" alt="" src="/uploads/images/<%= product.product.img %>">
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                <h2 class="card-title"><%=product.product.name %></h2>
+                <p>Price: $ <%= product.product.price %></p>
+                <p>User: <%= product.user.username %></p>
+                <p>Address:  <%= product.user.address %></p>
+                <p>Phone:  <%= product.user.phone %></p>
+                <p>Email:  <%= product.user.email %></p>
+                <p class="card-text"><small class="text-muted">Updated on:   <%= moment(product.product.timeCreated).format('LL') %> </small></p>
+  
+                <% if(currentUser && currentUser.username=="admin12345" ) { %>
+                  <form id="deleteForm" style="text-align: center; padding: 10px;" action="/<%= product._id %>?_method=DELETE" method="POST">
+                    <p>
+                      <button class="delBtn btn btn-danger btn-md">Confirm Delivery</button>
+                    </p> 
+                  </form>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% }); %>
+  
+  </div> <!-- end of container -->
+ 
+
+    <%} %>
+
+
+
+
+
+
+
+
+
+<%- include("partials/footer.ejs"); -%>

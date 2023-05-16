@@ -1,0 +1,12 @@
+repo access token for 7 days
+
+
+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
+
+
+https://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@github.com/macbollan/fishfinal.git
+
+NODE_USER=nodejs
+NODE_USER_PASSWORD=018effbb9fcb1f77c57c207641c20da1
+
+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

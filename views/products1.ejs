@@ -1,0 +1,161 @@
+<%- include("partials/header.ejs"); -%>
+
+<div class="container-fluid mt-3">
+  <div class="row">
+    <div class="col-md-3">
+      <div class="list-group">
+        <a href="/" class="list-group-item list-group-item-action">
+          Dashboard
+        </a>
+        <a href="/orders" class="list-group-item list-group-item-action">Orders</a>
+        <a href="/products" class="list-group-item list-group-item-action active">Products</a>
+        <a href="#" class="list-group-item list-group-item-action">Customers</a>
+        <a href="#" class="list-group-item list-group-item-action">Reports</a>
+        <a href="#" class="list-group-item list-group-item-action">Settings</a>
+      </div>
+    </div>
+    <div class="col-md-9">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Products</h2>
+        <button type="button" class="btn btn-lg btn-success" data-toggle="modal" data-target="#createProductModal">
+          Create Product
+        </button>
+      </div>
+      <% if(products.length<1) { %>
+        <p class="text-white">No products yet</p>
+      <% } %>
+      <div class="row">
+        <% products.forEach(function(product) { %>
+          <div class="col-md-6 col-lg-4 col-sm-12 cards mb-4">
+            <div class="card shadow-lg" style="border: none;">
+              <img src="/uploads/images/<%= product.img %>" class="card-img-top rounded" alt="..." style="max-height: 400px;">
+              <div class="card-body">
+                <h5 class="card-title" style="font-size: 30px;"><%= product.name %></h5>
+                <p class="card-text">Price: $ <%= product.price %></p>
+                <p class="card-text" style="font-size: 20px;"><%= product.description %></p>
+                <p class="card-text"><small class="text-muted">Updated on:   <%= moment(product.timeCreated).fromNow() %></small></p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="btn-group">
+
+                    <button class="btn btn-md btn-success" data-toggle="modal" data-target="#editProductModal<%= product._id %>">
+                      <i class="bi bi-pen-fill"></i> Edit
+                    </button>
+
+                    <form action="/product/<%= product._id %>?_method=DELETE" method="POST" style="display: inline-block;">
+                      <button class="btn btn-md btn-danger">
+                        <i class="bi bi-trash3-fill"></i> Delete
+                      </button>
+                    </form>
+                  </div>                 
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Edit Product Modal -->
+          <div class="modal fade" id="editProductModal<%= product._id %>" tabindex="-1" role="dialog" aria-labelledby="editProductModalLabel<%= product._id %>" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="editProductModalLabel<%= product._id %>">Edit Product</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form action="/<%= product._id %>?_method=PUT" method="POST" enctype="multipart/form-data" class="needs-validation" >
+                    <div class="form-group">
+                      <label for="">Name*</label>
+                      <input type="text" class="form-control" name="product[name]" placeholder="<%= product.name %>---<%= product._id %>" required>
+                      <div class="invalid-feedback">
+                        Product name.
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="">Price*</label>
+                      <input type="number" step="1" pattern="\d+"class="form-control" name="product[price]" placeholder="<%= product.price %>" required>
+                      <div class="invalid-feedback">
+                        Product Price.
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label" for="customFile">Upload an image</label>
+                      <input type="file" name="product[img]" class="form-control" id="customFile" placeholder="<%= product.img %>" required />
+                    </div>
+
+                    <div class="form-group">
+                      <label for="exampleFormControlTextarea1">Description*</label>
+                      <textarea class="form-control" id="exampleFormControlTextarea1" name="product[description]" placeholder="<%= product.description %>" rows="3" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-info btn-block">Submit</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        <% }); %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create Product Modal -->
+<div class="modal fade" id="createProductModal" tabindex="-1" role="dialog" aria-labelledby="createProductModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createProductModalLabel">Create Product</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="/" method="POST" enctype="multipart/form-data" class="needs-validation" >
+          <div class="form-group">
+            <label for="">Name*</label>
+            <input type="text" class="form-control" name="name" placeholder="Title" required>
+            <div class="invalid-feedback">
+              Product name.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="">Price*</label>
+            <input type="number" step="1" pattern="\d+" class="form-control" name="price" placeholder="Price" required>
+            <div class="invalid-feedback">
+              Product price.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="customFile">Upload an image</label>
+            <input type="file" name="image" class="form-control" id="customFile" required />
+          </div>
+
+          <div class="form-group">
+            <label for="exampleFormControlTextarea1">Description*</label>
+            <textarea class="form-control" id="exampleFormControlTextarea1" name="description" rows="3" required></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-info btn-block">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include("partials/footer.ejs"); -%>
+
+<style>
+  .card {
+    box-shadow: 0px 0px 50px rgba(0, 0, 0, 0.2);
+  }
+
+  .rounded {
+    border-radius: 10px;
+  }
+</style>
